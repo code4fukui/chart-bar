@@ -59,7 +59,7 @@ class ChartBar extends HTMLElement {
       .domain(dataset.map(d => d.name));
    
     const yScale = d3.scaleLinear()
-      .domain([0, d3.max(dataset, d => d.value)])
+      .domain([0, d3.max(dataset, d => parseFloat(d.value || d.count))])
       .range([height - padding, padding]);
    
     svg.append("g")
@@ -76,9 +76,12 @@ class ChartBar extends HTMLElement {
       .enter()
       .append("rect")
       .attr("x", d => xScale(d.name))
-      .attr("y", d => yScale(d.value))
+      .attr("y", d => yScale(d.value || d.count))
       .attr("width", xScale.bandwidth())
-      .attr("height", d=> height - padding - yScale(d.value))
+      .attr("height", d => {
+        console.log(d, yScale(d.value || d.count))
+        return height - padding - yScale(d.value || d.count)
+      })
       .attr("fill", "steelblue");
   }
 }
